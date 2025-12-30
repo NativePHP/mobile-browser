@@ -1,0 +1,43 @@
+{
+    "namespace": "Browser",
+
+    "bridge_functions": [
+        {
+            "name": "Browser.Open",
+            "android": "com.nativephp.browser.BrowserFunctions.Open",
+            "ios": "BrowserFunctions.Open",
+            "description": "Open a URL in the system's default browser"
+        },
+        {
+            "name": "Browser.OpenInApp",
+            "android": "com.nativephp.browser.BrowserFunctions.OpenInApp",
+            "ios": "BrowserFunctions.OpenInApp",
+            "description": "Open a URL in an in-app browser (SFSafariViewController/Chrome Custom Tabs)"
+        },
+        {
+            "name": "Browser.OpenAuth",
+            "android": "com.nativephp.browser.BrowserFunctions.OpenAuth",
+            "ios": "BrowserFunctions.OpenAuth",
+            "description": "Open a URL for OAuth authentication"
+        }
+    ],
+
+    "android": {
+        "permissions": [],
+        "dependencies": {
+            "implementation": [
+                "androidx.browser:browser:1.8.0"
+            ]
+        }
+    },
+
+    "ios": {
+        "info_plist": {},
+        "dependencies": {
+            "swift_packages": [],
+            "pods": []
+        }
+    },
+
+    "events": []
+}

@@ -1,0 +1,31 @@
+{
+    "name": "nativephp/mobile-browser",
+    "description": "Browser functionality for NativePHP Mobile - open URLs in system browser, in-app browser, and OAuth authentication",
+    "type": "nativephp-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "NativePHP",
+            "email": "info@nativephp.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "nativephp/mobile": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Native\\Mobile\\Providers\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Native\\Mobile\\Providers\\BrowserServiceProvider"
+            ]
+        },
+        "nativephp": {
+            "manifest": "nativephp.json"
+        }
+    }
+}
