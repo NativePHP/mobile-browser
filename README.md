@@ -2,61 +2,80 @@
 
 Open URLs in system browser, in-app browser (SFSafariViewController/Chrome Custom Tabs), and OAuth authentication sessions.
 
+## Overview
+
+The Browser API provides three methods for opening URLs, each designed for specific use cases: in-app browsing, system browser navigation, and web authentication flows.
+
 ## Installation
 
 ```bash
 composer require nativephp/mobile-browser
 ```
 
-## PHP Usage (Livewire/Blade)
+## Usage
+
+### PHP (Livewire/Blade)
 
 ```php
-use NativePHP\Browser\Facades\Browser;
-
-// Open URL in system browser (Safari/Chrome)
-Browser::open('https://example.com');
-
-// Open URL in in-app browser (SFSafariViewController on iOS, Chrome Custom Tabs on Android)
-Browser::inApp('https://example.com');
-
-// Open URL for OAuth authentication (ASWebAuthenticationSession on iOS)
-Browser::auth('https://oauth.example.com/authorize?...');
-```
-
-## JavaScript Usage (Vue/React/Inertia)
-
-```javascript
-import { browser } from '@nativephp/browser';
-
-// Open in system browser
-await browser.open('https://example.com');
+use Native\Mobile\Facades\Browser;
 
 // Open in in-app browser
-await browser.inApp('https://example.com');
+Browser::inApp('https://nativephp.com/mobile');
 
-// Open for OAuth authentication
-await browser.auth('https://oauth.example.com/authorize?...');
+// Open in system browser
+Browser::open('https://nativephp.com/mobile');
+
+// OAuth authentication
+Browser::auth('https://provider.com/oauth/authorize?client_id=123&redirect_uri=nativephp://127.0.0.1/auth/callback');
+```
+
+### JavaScript (Vue/React/Inertia)
+
+```js
+import { browser } from '#nativephp';
+
+// Open in in-app browser
+await browser.inApp('https://nativephp.com/mobile');
+
+// Open in system browser
+await browser.open('https://nativephp.com/mobile');
+
+// OAuth authentication
+await browser.auth('https://provider.com/oauth/authorize?client_id=123&redirect_uri=nativephp://127.0.0.1/auth/callback');
 ```
 
 ## Methods
 
-### `Browser::open(string $url): bool`
+### `inApp()`
 
-Opens the URL in the device's default browser app (Safari on iOS, default browser on Android).
+Opens a URL in an embedded browser within your app using Custom Tabs (Android) or SFSafariViewController (iOS).
 
-### `Browser::inApp(string $url): bool`
+### `open()`
 
-Opens the URL in an in-app browser overlay:
-- **iOS**: Uses `SFSafariViewController` for a seamless in-app experience
-- **Android**: Uses Chrome Custom Tabs with fallback to system browser
+Opens a URL in the device's default browser app, leaving your application entirely.
 
-### `Browser::auth(string $url): bool`
+### `auth()`
 
-Opens the URL in an authentication session optimized for OAuth flows:
-- **iOS**: Uses `ASWebAuthenticationSession` which handles the callback automatically
-- **Android**: Uses Chrome Custom Tabs with deep link callback handling
+Opens a URL in a specialized authentication browser designed for OAuth flows with automatic `nativephp://` redirect handling.
 
-The callback URL scheme is read from your `NATIVEPHP_DEEPLINK_SCHEME` environment variable.
+## Use Cases
+
+### When to Use Each Method
+
+**`inApp()`** - Keep users within your app experience:
+- Documentation, help pages, terms of service
+- External content that relates to your app
+- When you want users to easily return to your app
+
+**`open()`** - Full browser experience needed:
+- Complex web applications
+- Content requiring specific browser features
+- When users need bookmarking or sharing capabilities
+
+**`auth()`** - OAuth authentication flows:
+- Login with WorkOS, Auth0, Google, Facebook, etc.
+- Secure authentication with automatic redirects
+- Isolated browser session for security
 
 ## License
 
