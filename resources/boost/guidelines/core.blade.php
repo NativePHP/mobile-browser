@@ -1,16 +1,6 @@
-## nativephp/mobile-browser
+## nativephp/browser
 
 Open URLs in system browser, in-app browser, and OAuth authentication sessions.
-
-### Installation
-
-```bash
-composer require nativephp/mobile-browser
-
-php artisan vendor:publish --tag=nativephp-plugins-provider
-php artisan native:plugin:register nativephp/mobile-browser
-php artisan native:plugin:list
-```
 
 ### PHP Usage (Livewire/Blade)
 
@@ -18,16 +8,16 @@ Use the `Browser` facade:
 
 @verbatim
 <code-snippet name="Using Browser Facade" lang="php">
-use NativePHP\Browser\Facades\Browser;
+use Native\Mobile\Facades\Browser;
 
-// Open URL in system browser (Safari/Chrome)
-Browser::open('https://example.com');
+// Open in in-app browser (keeps users in your app)
+Browser::inApp('https://nativephp.com/mobile');
 
-// Open URL in in-app browser (SFSafariViewController/Chrome Custom Tabs)
-Browser::inApp('https://example.com');
+// Open in system browser (leaves your app)
+Browser::open('https://nativephp.com/mobile');
 
-// Open URL for OAuth authentication
-Browser::auth('https://oauth.example.com/authorize?...');
+// OAuth authentication with automatic redirect handling
+Browser::auth('https://provider.com/oauth/authorize?client_id=123&redirect_uri=nativephp://127.0.0.1/auth/callback');
 </code-snippet>
 @endverbatim
 
@@ -35,43 +25,27 @@ Browser::auth('https://oauth.example.com/authorize?...');
 
 @verbatim
 <code-snippet name="Using Browser in JavaScript" lang="javascript">
-import { browser } from '@nativephp/browser';
-
-// Open in system browser
-await browser.open('https://example.com');
+import { browser } from '#nativephp';
 
 // Open in in-app browser
-await browser.inApp('https://example.com');
+await browser.inApp('https://nativephp.com/mobile');
 
-// Open for OAuth authentication
-await browser.auth('https://oauth.example.com/authorize?...');
+// Open in system browser
+await browser.open('https://nativephp.com/mobile');
+
+// OAuth authentication
+await browser.auth('https://provider.com/oauth/authorize?client_id=123&redirect_uri=nativephp://127.0.0.1/auth/callback');
 </code-snippet>
 @endverbatim
 
-### Available Methods
+### Methods
 
-- `Browser::open(string $url)` / `browser.open(url)` - Open in system's default browser
-- `Browser::inApp(string $url)` / `browser.inApp(url)` - Open in in-app browser overlay
-- `Browser::auth(string $url)` / `browser.auth(url)` - Open for OAuth authentication flow
+- `Browser::inApp(string $url)` - Opens in embedded browser (SFSafariViewController/Chrome Custom Tabs)
+- `Browser::open(string $url)` - Opens in device's default browser
+- `Browser::auth(string $url)` - Opens OAuth authentication browser with automatic redirect handling
 
-### Platform Behavior
+### When to Use Each Method
 
-**iOS:**
-- `open()` - Opens Safari
-- `inApp()` - Uses SFSafariViewController
-- `auth()` - Uses ASWebAuthenticationSession with automatic callback handling
-
-**Android:**
-- `open()` - Opens default browser app
-- `inApp()` - Uses Chrome Custom Tabs (falls back to system browser)
-- `auth()` - Uses Chrome Custom Tabs with deep link callback
-
-### OAuth Authentication
-
-For OAuth flows, configure your callback scheme in `.env`:
-
-```env
-NATIVEPHP_DEEPLINK_SCHEME=myapp
-```
-
-The `auth()` method will automatically use this scheme for the callback URL.
+- **`inApp()`**: Keep users within your app for documentation, help pages, or related content
+- **`open()`**: Use when full browser features are required for complex web applications
+- **`auth()`**: Implement OAuth authentication flows with secure, automatic redirect handling
