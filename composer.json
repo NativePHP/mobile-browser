@@ -1,6 +1,5 @@
 {
     "name": "nativephp/mobile-browser",
-    "version": "0.0.4",
     "description": "Browser functionality for NativePHP Mobile - open URLs in system browser, in-app browser, and OAuth authentication",
     "type": "nativephp-plugin",
     "license": "MIT",
