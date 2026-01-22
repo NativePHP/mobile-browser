@@ -76,7 +76,3 @@ Opens a URL in a specialized authentication browser designed for OAuth flows wit
 - Login with WorkOS, Auth0, Google, Facebook, etc.
 - Secure authentication with automatic redirects
 - Isolated browser session for security
-
-## License
-
-MIT
