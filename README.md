@@ -32,16 +32,16 @@ Browser::auth('https://provider.com/oauth/authorize?client_id=123&redirect_uri=n
 ### JavaScript (Vue/React/Inertia)
 
 ```js
-import { browser } from '#nativephp';
+import { Browser } from '#nativephp';
 
 // Open in in-app browser
-await browser.inApp('https://nativephp.com/mobile');
+await Browser.inApp('https://nativephp.com/mobile');
 
 // Open in system browser
-await browser.open('https://nativephp.com/mobile');
+await Browser.open('https://nativephp.com/mobile');
 
 // OAuth authentication
-await browser.auth('https://provider.com/oauth/authorize?client_id=123&redirect_uri=nativephp://127.0.0.1/auth/callback');
+await Browser.auth('https://provider.com/oauth/authorize?client_id=123&redirect_uri=nativephp://127.0.0.1/auth/callback');
 ```
 
 ## Methods
