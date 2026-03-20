@@ -1,6 +1,5 @@
 {
     "namespace": "Browser",
-
     "bridge_functions": [
         {
             "name": "Browser.Open",
@@ -21,9 +20,8 @@
             "description": "Open a URL for OAuth authentication"
         }
     ],
-
     "android": {
-        "min_version": 33,
+        "min_version": 26,
         "permissions": [],
         "dependencies": {
             "implementation": [
@@ -31,7 +29,6 @@
             ]
         }
     },
-
     "ios": {
         "min_version": "18.2",
         "info_plist": {},
@@ -40,6 +37,5 @@
             "pods": []
         }
     },
-
     "events": []
 }
