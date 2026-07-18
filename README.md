@@ -76,3 +76,47 @@ Opens a URL in a specialized authentication browser designed for OAuth flows wit
 - Login with WorkOS, Auth0, Google, Facebook, etc.
 - Secure authentication with automatic redirects
 - Isolated browser session for security
+
+## Testing
+
+The plugin extends the NativePHP testing suite with browser-specific helpers, so your app tests can assert what was opened without knowing any bridge internals:
+
+```php
+use Native\Mobile\Testing\Native;
+
+it('opens the docs in the in-app browser', function () {
+    Native::fakeBridge()->respondTo('Browser.OpenInApp', ['success' => true]);
+
+    Native::test(HelpScreen::class)
+        ->tap('View documentation')
+        ->assertOpenedInApp('https://nativephp.com/docs');
+});
+
+it('starts the oauth flow', function () {
+    Native::fakeBridge()->respondTo('Browser.OpenAuth', ['success' => true]);
+
+    Native::test(LoginScreen::class)
+        ->tap('Continue with Google')
+        ->assertOpenedAuth();
+});
+
+it('does nothing until the button is tapped', function () {
+    Native::test(LoginScreen::class)
+        ->assertNothingBrowsed();
+});
+```
+
+### Helpers
+
+- `assertBrowsed(?string $url = null)` — assert a URL was opened, via `open()`, `inApp()`, or `auth()` — any of the three, or exactly `$url` when given.
+- `assertOpenedInApp(?string $url = null)` — assert a URL was opened in the in-app browser (`inApp()`), or exactly `$url` when given.
+- `assertOpenedAuth(?string $url = null)` — assert a URL was opened in an authentication session (`auth()`), or exactly `$url` when given.
+- `assertNothingBrowsed()` — assert nothing was opened by any of the three methods.
+
+`open()`, `inApp()`, and `auth()` are fire-and-forget calls with nothing to read back beyond success/failure, so there's no `with*()` helper to fake a response — script it directly when a test needs `open()`/`inApp()`/`auth()` to return `true`:
+
+```php
+Native::fakeBridge()->respondTo('Browser.Open', ['success' => true]);
+```
+
+The helpers are available on `Native::fakeBridge()` and chain directly off `Native::test(...)`. They register automatically while running tests (requires a core with a macroable FakeBridge; on older cores they simply don't register).
