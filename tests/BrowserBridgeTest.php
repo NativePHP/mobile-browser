@@ -13,8 +13,9 @@
 
 use Native\Mobile\Browser;
 use Native\Mobile\Testing\Native;
+use Tests\TestCase;
 
-uses(Tests\TestCase::class);
+uses(TestCase::class);
 
 beforeEach(function () {
     $this->bridge = Native::fakeBridge();
