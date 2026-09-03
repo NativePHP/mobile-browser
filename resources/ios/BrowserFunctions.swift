@@ -32,12 +32,22 @@ enum BrowserFunctions {
             let semaphore = DispatchSemaphore(value: 0)
 
             DispatchQueue.main.async {
-                if UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url, options: [:]) { opened in
-                        success = opened
-                        semaphore.signal()
-                    }
-                } else {
+                // Deliberately not gated on `canOpenURL`. For a custom scheme,
+                // iOS answers that false unless the scheme is listed in the
+                // CALLING app's LSApplicationQueriesSchemes — whether or not
+                // anything on the device handles it. An app whose schemes are
+                // not known when its Info.plist is written (a host app opening
+                // a per-tenant companion app, say) can never satisfy that, so
+                // the guard reports "nothing can open this" for every custom
+                // scheme, forever, including ones that would open fine.
+                //
+                // `open`'s completion handler answers the same question without
+                // the declaration requirement, and answers it from what
+                // actually happened rather than from a pre-flight guess. For
+                // http/https — the common case here — `canOpenURL` is
+                // unconditionally true, so nothing about that path changes.
+                UIApplication.shared.open(url, options: [:]) { opened in
+                    success = opened
                     semaphore.signal()
                 }
             }
