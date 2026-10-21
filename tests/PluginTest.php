@@ -80,6 +80,22 @@ describe('Native Code', function () {
             }
         }
     });
+
+    it('declares the activity and init function that keep the Android auth tab in its own task', function () {
+        $manifest = json_decode(file_get_contents($this->manifestPath), true);
+
+        $kotlinContent = implode('', array_map('file_get_contents', glob($this->pluginPath.'/resources/android/*.kt')));
+
+        expect($manifest['android']['activities'])->toContain([
+            'name' => '.AuthTabActivity',
+            'exported' => false,
+            'theme' => '@android:style/Theme.Translucent.NoTitleBar',
+        ]);
+        expect($kotlinContent)->toContain('class AuthTabActivity');
+
+        $parts = explode('.', $manifest['android']['init_function']);
+        expect($kotlinContent)->toContain('fun '.end($parts).'(context: Context)');
+    });
 });
 
 describe('Composer Configuration', function () {

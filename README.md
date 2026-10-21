@@ -58,6 +58,8 @@ Opens a URL in the device's default browser app, leaving your application entire
 
 Opens a URL in a specialized authentication browser designed for OAuth flows with automatic `nativephp://` redirect handling.
 
+On Android the page opens in a Custom Tab in a task of its own, so it shows as a second card in Recents while the sign-in is open. Returning to your app brings the tab back to the front until the sign-in ends. It ends when any deep link reaches your app (normally the redirect), when the user closes the tab, or when `auth()` is called again. If the app is updated, force-stopped or killed in the background, the next launch opens your app rather than the old sign-in page.
+
 ## Use Cases
 
 ### When to Use Each Method
