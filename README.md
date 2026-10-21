@@ -54,6 +54,11 @@ Opens a URL in an embedded browser within your app using Custom Tabs (Android) o
 
 Opens a URL in the device's default browser app, leaving your application entirely.
 
+Also handles custom schemes — `open('myapp://path')` hands the URL to whichever
+app registered `myapp`, if one is installed. The returned `success` is the real
+answer: `false` means the system found nothing to open it with, which is how you
+detect that the target app is not installed.
+
 ### `auth()`
 
 Opens a URL in a specialized authentication browser designed for OAuth flows with automatic `nativephp://` redirect handling.
