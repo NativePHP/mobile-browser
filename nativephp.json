@@ -22,7 +22,15 @@
     ],
     "android": {
         "min_version": 26,
+        "init_function": "com.nativephp.browser.browserPluginInit",
         "permissions": [],
+        "activities": [
+            {
+                "name": ".AuthTabActivity",
+                "exported": false,
+                "theme": "@android:style/Theme.Translucent.NoTitleBar"
+            }
+        ],
         "dependencies": {
             "implementation": [
                 "androidx.browser:browser:1.8.0"

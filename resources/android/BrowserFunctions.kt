@@ -80,7 +80,8 @@ object BrowserFunctions {
 
     /**
      * Open a URL in an authentication session
-     * On Android, this uses Custom Tabs with the configured callback scheme
+     * On Android, this uses a Custom Tab in a task of its own (see AuthTab), and the
+     * callback reaches the app as a deep link
      * Parameters:
      *   - url: string - The URL to open for authentication
      * Returns:
@@ -94,10 +95,7 @@ object BrowserFunctions {
             Log.d("Browser.OpenAuth", "Opening URL for authentication: $url")
 
             return try {
-                // Use Custom Tabs for auth flow - the callback will be handled by deep links
-                val builder = CustomTabsIntent.Builder()
-                val customTabsIntent = builder.build()
-                customTabsIntent.launchUrl(activity, Uri.parse(url))
+                AuthTab.start(activity, url)
 
                 Log.d("Browser.OpenAuth", "Successfully opened auth URL")
                 mapOf("success" to true)
