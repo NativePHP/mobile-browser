@@ -144,7 +144,11 @@ class AuthTabActivity : Activity() {
         tabOpened = true
 
         try {
-            CustomTabsIntent.Builder().build().launchUrl(this, Uri.parse(intent.getStringExtra(EXTRA_URL)))
+            val uri = Uri.parse(intent.getStringExtra(EXTRA_URL))
+            val tab = CustomTabsIntent.Builder().build()
+            tab.intent.data = uri
+            keepOutOfThisApp(tab.intent)
+            tab.launchUrl(this, uri)
         } catch (e: ActivityNotFoundException) {
             Log.e("Browser.OpenAuth", "No browser to open the auth URL", e)
             AuthTab.closed(this)
