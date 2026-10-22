@@ -96,6 +96,19 @@ describe('Native Code', function () {
         $parts = explode('.', $manifest['android']['init_function']);
         expect($kotlinContent)->toContain('fun '.end($parts).'(context: Context)');
     });
+
+    it('sends the app\'s own links to a browser on Android instead of back into the app', function () {
+        $functions = file_get_contents($this->pluginPath.'/resources/android/BrowserFunctions.kt');
+        $authTab = file_get_contents($this->pluginPath.'/resources/android/AuthTab.kt');
+
+        expect($functions)->toContain('internal fun Context.keepOutOfThisApp(intent: Intent): Intent');
+        expect($functions)->toContain('selector = Intent(Intent.ACTION_VIEW, Uri.parse("$scheme://"))');
+
+        // Open, OpenInApp (and its plain fallback) and OpenAuth's tab all launch through it.
+        expect($functions)->toContain('activity.startActivity(activity.keepOutOfThisApp(intent))');
+        expect($functions)->toContain('activity.keepOutOfThisApp(customTabsIntent.intent)');
+        expect($authTab)->toContain('keepOutOfThisApp(tab.intent)');
+    });
 });
 
 describe('Composer Configuration', function () {

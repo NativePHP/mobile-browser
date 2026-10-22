@@ -59,6 +59,10 @@ app registered `myapp`, if one is installed. The returned `success` is the real
 answer: `false` means the system found nothing to open it with, which is how you
 detect that the target app is not installed.
 
+A web link that another app handles (YouTube, Maps) opens in that app. A link your
+own app handles (one on your `NATIVEPHP_DEEPLINK_HOST`) opens in the browser rather
+than coming back into your app. `inApp()` and `auth()` do the same on Android.
+
 ### `auth()`
 
 Opens a URL in a specialized authentication browser designed for OAuth flows with automatic `nativephp://` redirect handling.
