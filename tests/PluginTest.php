@@ -102,12 +102,23 @@ describe('Native Code', function () {
         $authTab = file_get_contents($this->pluginPath.'/resources/android/AuthTab.kt');
 
         expect($functions)->toContain('internal fun Context.keepOutOfThisApp(intent: Intent): Intent');
+        expect($functions)->toContain('return intent.inABrowser()');
+
+        // Open and OpenAuth's tab launch through it.
+        expect($functions)->toContain('activity.startActivity(activity.keepOutOfThisApp(intent))');
+        expect($authTab)->toContain('keepOutOfThisApp(tab.intent)');
+    });
+
+    it('opens every web link in the in-app browser in a browser on Android, never in an app holding its App Link', function () {
+        $functions = file_get_contents($this->pluginPath.'/resources/android/BrowserFunctions.kt');
+
+        expect($functions)->toContain('internal fun Intent.inABrowser(): Intent');
         expect($functions)->toContain('selector = Intent(Intent.ACTION_VIEW, Uri.parse("$scheme://"))');
 
-        // Open, OpenInApp (and its plain fallback) and OpenAuth's tab all launch through it.
-        expect($functions)->toContain('activity.startActivity(activity.keepOutOfThisApp(intent))');
-        expect($functions)->toContain('activity.keepOutOfThisApp(customTabsIntent.intent)');
-        expect($authTab)->toContain('keepOutOfThisApp(tab.intent)');
+        // OpenInApp's Custom Tab and its plain fallback both launch through it, unconditionally.
+        expect($functions)->toContain('customTabsIntent.intent.inABrowser()');
+        expect($functions)->toContain('activity.startActivity(intent.inABrowser())');
+        expect($functions)->not->toContain('activity.keepOutOfThisApp(customTabsIntent.intent)');
     });
 });
 

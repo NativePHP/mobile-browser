@@ -63,7 +63,7 @@ object BrowserFunctions {
                 val builder = CustomTabsIntent.Builder()
                 val customTabsIntent = builder.build()
                 customTabsIntent.intent.data = uri
-                activity.keepOutOfThisApp(customTabsIntent.intent)
+                customTabsIntent.intent.inABrowser()
                 customTabsIntent.launchUrl(activity, uri)
 
                 Log.d("Browser.OpenInApp", "Successfully opened URL in in-app browser")
@@ -73,7 +73,7 @@ object BrowserFunctions {
                 // Fallback to system browser if Custom Tabs fail
                 return try {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    activity.startActivity(activity.keepOutOfThisApp(intent))
+                    activity.startActivity(intent.inABrowser())
                     Log.d("Browser.OpenInApp", "Opened URL in system browser (fallback)")
                     mapOf("success" to true)
                 } catch (fallbackError: Exception) {
@@ -120,12 +120,8 @@ object BrowserFunctions {
  * own MainActivity, so the browser never opens and the link arrives as a deep link instead.
  * Before Android 12 an unverified link can also put the app in the chooser next to the browsers.
  *
- * In those cases the intent gets a selector: the same request for the scheme alone, with no
- * host. Android picks the activity from the selector and still delivers the real URL, and only a
- * browser handles a web URL with no host, since an app's link filter always names one. So the
- * user's default browser opens the URL (or, with no default set, the system asks which
- * browser). Every other URL is left alone, so links to other apps (YouTube, Maps) still open in
- * those apps.
+ * In those cases the intent is sent to a browser with [inABrowser]. Every other URL is left
+ * alone, so links to other apps (YouTube, Maps) still open in those apps.
  */
 @Suppress("DEPRECATION")
 internal fun Context.keepOutOfThisApp(intent: Intent): Intent {
@@ -144,7 +140,31 @@ internal fun Context.keepOutOfThisApp(intent: Intent): Intent {
 
     Log.d("Browser", "${intent.data} would open in this app, sending it to a browser instead")
 
-    return intent.apply {
+    return intent.inABrowser()
+}
+
+/**
+ * Make sure this intent, a VIEW intent for a web URL, opens in a browser, never in an app that
+ * holds an App Link for the URL.
+ *
+ * The intent gets a selector: the same request for the scheme alone, with no host. Android picks
+ * the activity from the selector and still delivers the real URL, and only a browser handles a
+ * web URL with no host, since an app's link filter always names one. So the user's default
+ * browser opens the URL (or, with no default set, the system asks which browser).
+ *
+ * The in-app browser uses this for every web URL: a Custom Tab is a browser by definition, and
+ * on iOS SFSafariViewController never hands a universal link to its app either. Without it, a
+ * link another app has verified (github.com with GitHub Mobile installed) leaves the app for
+ * that one. Any other scheme is left alone.
+ */
+internal fun Intent.inABrowser(): Intent {
+    val scheme = data?.scheme?.lowercase()
+
+    if (scheme != "http" && scheme != "https") {
+        return this
+    }
+
+    return apply {
         addCategory(Intent.CATEGORY_BROWSABLE)
         selector = Intent(Intent.ACTION_VIEW, Uri.parse("$scheme://"))
             .addCategory(Intent.CATEGORY_BROWSABLE)
